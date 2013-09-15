@@ -1,0 +1,20 @@
+[
+    {
+        "methods"    : [],
+        "patterns"   : ["\/^\\/(\\?.*)?$\/"],
+        "controller" : "home",
+        "action"     : "index"
+    },
+    {
+        "methods"    : ["POST", "PUT"],
+        "patterns"   : ["\/^\\/v1\\/people\\/signin(\\?.*)?$\/"],
+        "controller" : "people",
+        "action"     : "signin"
+    },
+    {
+        "methods"    : [],
+        "patterns"   : ["\/^v1\\/people\\/[^\\/]*(\\?.*)?$\/"],
+        "controller" : "people",
+        "action"     : "get"
+    }
+]
