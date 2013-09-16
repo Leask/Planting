@@ -93,8 +93,10 @@ abstract class Controller {
                     if ($json === null) {
                         return null;
                     }
-                    if ($rI === '@') {
+                    if ($rItem[1] === '@') {
                         $value = $json;
+                    } else if ($rItem[1] === '#') {
+                        $value = (array) $json;
                     } else if (isset($json->$rI)) {
                         $value = $json->$rI;
                     } else {
@@ -103,6 +105,7 @@ abstract class Controller {
             }
             switch ($rItem[1]) {
                 case 'int':
+                    $value = (int) $value;
                     break;
                 case 'number':
                     break;

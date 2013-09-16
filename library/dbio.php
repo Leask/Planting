@@ -1,8 +1,17 @@
 <?php
 
-class dbio {
+class Dbio {
 
     static $dbRes = null;
+
+
+    static function escape($string) {
+        return str_replace(
+            ["\\"  , "\0" , "\n" , "\r" , "\x1a", "'" , '"' ],
+            ["\\\\", "\\0", "\\n", "\\r", "\Z"  , "\'", '\"'],
+            $string
+        );
+    }
 
 
     static function connect() {
@@ -16,7 +25,7 @@ class dbio {
             $env['mysql']['password'],
             $env['mysql']['database'],
             $env['mysql']['port']
-        }
+        );
         if (!($error = mysqli_connect_error())) {
             $res->set_charset('utf8mb4');
             return (self::$dbRes = $res);
@@ -30,7 +39,7 @@ class dbio {
         $dbRes = self::connect();
         if ((@$rawResult = $dbRes->query($sql))) {
             return [
-                'raw_result'    => $rawResult,
+                'native'        => $rawResult,
                 'affected_rows' => $dbRes->affected_rows,
                 'insert_id'     => $dbRes->insert_id,
             ];

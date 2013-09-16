@@ -12,6 +12,12 @@
         "action"     : "signin"
     },
     {
+        "methods"    : ["POST", "PUT"],
+        "patterns"   : ["\/^\\/v1\\/people\\/signup(\\?.*)?$\/"],
+        "controller" : "people",
+        "action"     : "signup"
+    },
+    {
         "methods"    : [],
         "patterns"   : ["\/^v1\\/people\\/[^\\/]*(\\?.*)?$\/"],
         "controller" : "people",

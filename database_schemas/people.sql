@@ -13,3 +13,8 @@ CREATE TABLE `people` (
     `locale`      varchar(10)  NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = MyISAM AUTO_INCREMENT = 730 DEFAULT CHARSET = utf8mb4;
+
+ALTER TABLE `people` CHANGE COLUMN `description` `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE `people` CHANGE COLUMN `name`        `name`        varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE `people` ADD COLUMN    `password`                  varchar(32)  CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE `people` ADD COLUMN    `salt`                      varchar(32)  CHARACTER SET utf8 COLLATE utf8_unicode_ci;

@@ -40,3 +40,16 @@ function route($method, $uri, $routes) {
     }
     return null;
 }
+
+function randString() {
+    return md5(rand().rand().rand());
+}
+
+function length($string) {
+    return mb_strlen($string, 'utf8');
+}
+
+function lenLimit($string, $min, $max) {
+    $length = length($string);
+    return $length >= $min && $length <= $max;
+}

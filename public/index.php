@@ -28,7 +28,7 @@ if (!$routes) {
 }
 $path = route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], $routes);
 if ($path) {
-    $ctlName = "ctl{$path['controller']}";
+    $ctlName = "Ctl{$path['controller']}";
     $actName = "act{$path['action']}";
     load("controllers/{$ctlName}.php");
     $controller = new $ctlName();
