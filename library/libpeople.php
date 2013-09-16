@@ -5,7 +5,7 @@ class LibPeople {
     private $salt = '7e32b7639cdfe0f8a92d2d76d2b9a357';
 
 
-    protected function pack($rawPeople) {
+    static function pack($rawPeople) {
         return $rawPeople ? [
             'id'          => $rawPeople['id'],
             'external_id' => $rawPeople['external_id'],
@@ -24,16 +24,54 @@ class LibPeople {
     }
 
 
-    protected function encryptPassword($password, $salt) {
-        global $env;
-        return md5("{$env['salt']}{$password}{$this->salt}{$salt}");
-    }
-
-
     static function validateEmail($email) {
         $email   = strtolower(trim($email));
         $pattern = '/^[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/';
         return preg_match($pattern, $email) ? $email : null;
+    }
+
+
+    static function getById($id, $raw = false) {
+        if (($id = (int) $id)) {
+            $curPerson = Dbio::queryRow(
+                "SELECT * FROM `people` WHERE `id` = {$id};"
+            );
+            return $raw ? $curPerson : self::pack($curPerson);
+        }
+        return null;
+    }
+
+
+    static function getByScreenName($screen_name, $raw = false) {
+        $screen_name = Dbio::escape(strtolower(trim($screen_name)));
+        if (length($screen_name)) {
+            $curPerson = Dbio::queryRow(
+                "SELECT * FROM `people` WHERE `screen_name` = '{$screen_name}';"
+            );
+            return $raw ? $curPerson : self::pack($curPerson);
+        }
+        return null;
+    }
+
+
+    static function getByExternalIdAndProvider(
+        $external_id, $provider, $raw = true
+    ) {
+        $provider = Dbio::escape(strtolower(trim($provider)));
+        switch ($provider) {
+            default:
+                $external_id = strtolower($external_id);
+        }
+        $external_id = Dbio::escape(trim($external_id));
+        if ($external_id && $provider) {
+            $curPerson = Dbio::queryRow(
+                "SELECT * FROM `people`
+                 WHERE `external_id` = '{$external_id}'
+                 AND   `provider`    =  '{$provider}';"
+            );
+            return $raw ? $curPerson : self::pack($curPerson);
+        }
+        return null;
     }
 
 
@@ -109,6 +147,12 @@ class LibPeople {
     }
 
 
+    protected function encryptPassword($password, $salt) {
+        global $env;
+        return md5("{$env['salt']}{$password}{$this->salt}{$salt}");
+    }
+
+
     public function create($person) {
         $vldResult = self::validate($person);
         if (@$vldResult['error']) {
@@ -140,55 +184,11 @@ class LibPeople {
              `updated_at`  = NOW();"
         );
         if ($rawResult) {
-            if (($person = $this->getById($rawResult['insert_id']))) {
+            if (($person = self::getById($rawResult['insert_id']))) {
                 return ['person' => $person];
             }
         }
         return ['error' => 'server_error'];
-    }
-
-
-    public function getById($id, $raw = false) {
-        if (($id = (int) $id)) {
-            $curPerson = Dbio::queryRow(
-                "SELECT * FROM `people` WHERE `id` = {$id};"
-            );
-            return $raw ? $curPerson : $this->pack($curPerson);
-        }
-        return null;
-    }
-
-
-    public function getByScreenName($screen_name, $raw = false) {
-        $screen_name = Dbio::escape(strtolower(trim($screen_name)));
-        if (length($screen_name)) {
-            $curPerson = Dbio::queryRow(
-                "SELECT * FROM `people` WHERE `screen_name` = '{$screen_name}';"
-            );
-            return $raw ? $curPerson : $this->pack($curPerson);
-        }
-        return null;
-    }
-
-
-    public function getByExternalIdAndProvider(
-        $external_id, $provider, $raw = true
-    ) {
-        $provider = Dbio::escape(strtolower(trim($provider)));
-        switch ($provider) {
-            default:
-                $external_id = strtolower($external_id);
-        }
-        $external_id = Dbio::escape(trim($external_id));
-        if ($external_id && $provider) {
-            $curPerson = Dbio::queryRow(
-                "SELECT * FROM `people`
-                 WHERE `external_id` = '{$external_id}'
-                 AND   `provider`    =  '{$provider}';"
-            );
-            return $raw ? $curPerson : $this->pack($curPerson);
-        }
-        return null;
     }
 
 }
