@@ -21,7 +21,7 @@ class LibToken {
         sort($cScope);
         $cScope     = Dbio::escape(json_encode($cScope));
         $data       = Dbio::escape(json_encode($data));
-        $code       = randString() . randString();
+        $code       = Core::randString() . Core::randString();
         $expires_at = $env['now'] + (int) $expires_in;
         $rawResult  = Dbio::execute(
             "INSERT INTO `tokens` SET
@@ -54,10 +54,10 @@ class LibToken {
             'resource_hash' => $rawToken['resource_hash'],
             'scope'         => json_decode($rawToken['scope'], true),
             'data'          => json_decode($rawToken['data'],  true),
-            'created_at'    => dbTimeToIsoTime($rawToken['created_at']),
-            'touched_at'    => dbTimeToIsoTime($rawToken['touched_at']),
-            'updated_at'    => dbTimeToIsoTime($rawToken['updated_at']),
-            'expires_at'    => dbTimeToIsoTime($rawToken['expires_at']),
+            'created_at'    => Core::dbTimeToIsoTime($rawToken['created_at']),
+            'touched_at'    => Core::dbTimeToIsoTime($rawToken['touched_at']),
+            'updated_at'    => Core::dbTimeToIsoTime($rawToken['updated_at']),
+            'expires_at'    => Core::dbTimeToIsoTime($rawToken['expires_at']),
             'class'         => 'token',
         ] : null;
     }

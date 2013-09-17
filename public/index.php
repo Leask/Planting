@@ -5,33 +5,36 @@
  * @copyright Copyright (C) 2013 CareNodes
  */
 
-// Init Core
+// Initialization
 define('ROOT', "{$_SERVER['DOCUMENT_ROOT']}/../");
-include_once ROOT . 'core.php';
-$env = readJson('env.json', true);
+// Automatic load class
+function __autoload($className) {
+    include_once ROOT . 'library/' . strtolower($className) . '.php';
+}
+$env = Core::readJson('env.json', true);
 if (!$env) {
-    writeLog('Error env.json!');
+    Core::log('Error env.json!');
     exit();
 }
 $env['now'] = time();
 
 // Access log
-writeLog("+ {$_SERVER['REQUEST_URI']}");
+Core::log("+ {$_SERVER['REQUEST_URI']}");
 
 // Access Control Allow
-aca($env['web_url']);
+Core::aca($env['web_url']);
 
 // Dispatch
-$routes = readJson('routes.json', true);
+$routes = Core::readJson('routes.json', true);
 if (!$routes) {
-    writeLog('Error routes.json!');
+    Core::log('Error routes.json!');
     exit();
 }
-$path = route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], $routes);
+$path = Core::route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], $routes);
 if ($path) {
     $ctlName = "Ctl{$path['controller']}";
     $actName = "act{$path['action']}";
-    load("controllers/{$ctlName}.php");
+    Core::load("controllers/{$ctlName}.php");
     $controller = new $ctlName();
     $controller->$actName();
 } else {
@@ -39,6 +42,5 @@ if ($path) {
     // 404;
 }
 
-
 // Access log
-writeLog("- {$_SERVER['REQUEST_URI']}");
+Core::log("- {$_SERVER['REQUEST_URI']}");

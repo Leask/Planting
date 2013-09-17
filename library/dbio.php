@@ -30,7 +30,7 @@ class Dbio {
             $res->set_charset('utf8mb4');
             return (self::$dbRes = $res);
         }
-        writeLog("Database error: {$error}");
+        Core::log("Database error: {$error}");
         return null;
     }
 
@@ -44,7 +44,7 @@ class Dbio {
                 'insert_id'     => $dbRes->insert_id,
             ];
         }
-        writeLog("Database error: {$dbRes->error} / SQL statement: {$sql}");
+        Core::log("Database error: {$dbRes->error} / SQL statement: {$sql}");
         return null;
     }
 

@@ -14,8 +14,8 @@ class LibPeople {
             'screen_name' => $rawPeople['screen_name'],
             'description' => strlen($rawPeople['description']) ? $rawPeople['description'] : '',
             'avatar'      => $rawPeople['avatar'] ?: '',
-            'created_at'  => dbTimeToIsoTime($rawPeople['created_at']),
-            'updated_at'  => dbTimeToIsoTime($rawPeople['updated_at']),
+            'created_at'  => Core::dbTimeToIsoTime($rawPeople['created_at']),
+            'updated_at'  => Core::dbTimeToIsoTime($rawPeople['updated_at']),
             'status'      => $rawPeople['status'],
             'timezone'    => $rawPeople['timezone'],
             'locale'      => $rawPeople['locale'],
@@ -44,7 +44,7 @@ class LibPeople {
 
     static function getByScreenName($screen_name, $raw = false) {
         $screen_name = Dbio::escape(strtolower(trim($screen_name)));
-        if (length($screen_name)) {
+        if (Core::length($screen_name)) {
             $curPerson = Dbio::queryRow(
                 "SELECT * FROM `people` WHERE `screen_name` = '{$screen_name}';"
             );
@@ -82,7 +82,7 @@ class LibPeople {
         $result = [];
 
         $person['screen_name'] = @trim($person['screen_name']);
-        if (lenLimit($person['screen_name'], 3, 14)) {
+        if (Core::lenLimit($person['screen_name'], 3, 14)) {
             $result['screen_name'] = DBio::escape($person['screen_name']);
         } else {
             return ['error' => 'invalid_screen_name'];
@@ -90,7 +90,7 @@ class LibPeople {
 
         if (isset($person['name'])) {
             $person['name'] = @trim($person['name']);
-            if (lenLimit($person['name'], 1, 21)) {
+            if (Core::lenLimit($person['name'], 1, 21)) {
                 $result['name'] = DBio::escape($person['name']);
             } else {
                 return ['error' => 'invalid_name'];
@@ -101,7 +101,7 @@ class LibPeople {
 
         if (isset($person['description'])) {
             $person['description'] = @trim($person['description']);
-            if (lenLimit($person['description'], 0, 140)) {
+            if (Core::lenLimit($person['description'], 0, 140)) {
                 $result['description'] = DBio::escape($person['description']);
             } else {
                 return ['error' => 'invalid_name'];
@@ -137,7 +137,7 @@ class LibPeople {
                 return ['error' => 'invalid_provider'];
         }
 
-        if (@lenLimit($person['password'], 4, 256)) {
+        if (@Core::lenLimit($person['password'], 4, 256)) {
             $result['password'] = $person['password'];
         } else {
             return ['error' => 'invalid_password'];
@@ -167,8 +167,8 @@ class LibPeople {
         )) {
             return ['error' => 'duplicate_person'];
         }
-        $salt     = randString();
-        $password = $this->encryptPassword($person['password'], $salt);
+        $salt      = Core::randString();
+        $password  = $this->encryptPassword($person['password'], $salt);
         $rawResult = Dbio::execute(
             "INSERT INTO `people` SET
              `screen_name` = '{$person['screen_name']}',

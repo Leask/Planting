@@ -3,12 +3,14 @@
 class CtlPeople extends Controller {
 
     public function actSignin() {
-        $inputs = $this->getInputs([
+        if (!($inputs = $this->getInputs([
             'screen_name' => ['json'],
             'external_id' => ['json'],
             'provider'    => ['json'],
             'password'    => ['json'],
-        ]);
+        ]))) {
+            return;
+        }
         $libPeople = new LibPeople();
         if ($inputs['screen_name']) {
             $sinResult = $libPeople->sigininByScreenNameAndPassword(
@@ -26,7 +28,7 @@ class CtlPeople extends Controller {
         }
         if (@$sinResult['error']) {
             $this->jsonError(
-                $sinResult['error'] === 'server_error' ? 500 : 400,
+                $sinResult['error'] === 'server_error' ? 500 : 401,
                 $sinResult['error']
             );
             return;
@@ -36,7 +38,11 @@ class CtlPeople extends Controller {
 
 
     public function actSignup() {
-        $inputs = $this->getInputs(['person' => ['json', '#']]);
+        if (!($inputs = $this->getInputs([
+            'person' => ['json', '#']
+        ]))) {
+            return;
+        }
         $libPeople = new LibPeople();
         $vldResult = $libPeople->create($inputs['person']);
         if (@$vldResult['error']) {

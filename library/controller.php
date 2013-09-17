@@ -89,8 +89,9 @@ abstract class Controller {
                     $value = @$_POST[$rI];
                     break;
                 case 'json':
-                    $json = $json ?: json_decode(getRequestBody());
+                    $json = $json ?: json_decode(Core::getRequestBody());
                     if ($json === null) {
+                        $this->jsonError(400, 'invalid_json');
                         return null;
                     }
                     if (@$rItem[1] === '@') {
