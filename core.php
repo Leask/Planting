@@ -53,3 +53,11 @@ function lenLimit($string, $min, $max) {
     $length = length($string);
     return $length >= $min && $length <= $max;
 }
+
+function isoTime($timestamp) {
+    return date(DateTime::ISO8601, $timestamp);
+}
+
+function dbTimeToIsoTime($strTime) {
+    return isoTime(strtotime($strTime));
+}

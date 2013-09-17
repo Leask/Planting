@@ -7,15 +7,15 @@ class LibPeople {
 
     static function pack($rawPeople) {
         return $rawPeople ? [
-            'id'          => $rawPeople['id'],
+            'id'          => (int) $rawPeople['id'],
             'external_id' => $rawPeople['external_id'],
             'provider'    => $rawPeople['provider'],
             'name'        => strlen($rawPeople['name']) ? $rawPeople['name'] : $rawPeople['screen_name'],
             'screen_name' => $rawPeople['screen_name'],
             'description' => strlen($rawPeople['description']) ? $rawPeople['description'] : '',
             'avatar'      => $rawPeople['avatar'] ?: '',
-            'created_at'  => $rawPeople['created_at'],
-            'updated_at'  => $rawPeople['updated_at'],
+            'created_at'  => dbTimeToIsoTime($rawPeople['created_at']),
+            'updated_at'  => dbTimeToIsoTime($rawPeople['updated_at']),
             'status'      => $rawPeople['status'],
             'timezone'    => $rawPeople['timezone'],
             'locale'      => $rawPeople['locale'],

@@ -15,7 +15,10 @@ class CtlPeople extends Controller {
         $libPeople = new LibPeople();
         $vldResult = $libPeople->create($inputs['person']);
         if (@$vldResult['error']) {
-            $this->jsonError(400, $vldResult['error']);
+            $this->jsonError(
+                $vldResult['error'] === 'server_error' ? 500 : 400,
+                $vldResult['error']
+            );
             return;
         }
         $this->jsonResponse($vldResult['person']);
