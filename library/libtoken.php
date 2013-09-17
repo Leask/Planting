@@ -3,8 +3,9 @@
 class LibToken {
 
     static function create(
-        $person_id, $client, $category, $resource, $scope, $data
+        $person_id, $client, $category, $resource, $scope, $data, $expires_in
     ) {
+        global $env;
         $person_id = (int) $person_id;
         $client    = Dbio::escape(strtolower(trim($client)));
         $category  = Dbio::escape(strtolower(trim($category)));
@@ -18,24 +19,29 @@ class LibToken {
             }
         }
         sort($cScope);
-        $cScope    = Dbio::escape(json_encode($cScope));
-        $data      = Dbio::escape(json_encode($data));
-        $code      = randString() . randString();
-        $rawResult = Dbio::execute(
+        $cScope     = Dbio::escape(json_encode($cScope));
+        $data       = Dbio::escape(json_encode($data));
+        $code       = randString() . randString();
+        $expires_at = $env['now'] + (int) $expires_in;
+        $rawResult  = Dbio::execute(
             "INSERT INTO `tokens` SET
             `code`          = '{$code}',
             `person_id`     =  {$person_id},
             `client`        = '{$client}',
-            `category`      = '{$category}'
+            `category`      = '{$category}',
             `resource_hash` = '{$resource}',
             `scope`         = '{$cScope}',
             `data`          = '{$data}',
             `touched_at`    =  NOW(),
             `updated_at`    =  NOW(),
-            `expires_at`    =  NOW()"
+            `expires_at`    =  FROM_UNIXTIME({$expires_at});"
         );
-
-
+        if ($rawResult) {
+            if (($token = self::getById($rawResult['insert_id']))) {
+                return ['token' => $token];
+            }
+        }
+        return ['error' => 'server_error'];
     }
 
 
@@ -52,6 +58,7 @@ class LibToken {
             'touched_at'    => dbTimeToIsoTime($rawToken['touched_at']),
             'updated_at'    => dbTimeToIsoTime($rawToken['updated_at']),
             'expires_at'    => dbTimeToIsoTime($rawToken['expires_at']),
+            'class'         => 'token',
         ] : null;
     }
 

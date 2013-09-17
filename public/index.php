@@ -13,6 +13,7 @@ if (!$env) {
     writeLog('Error env.json!');
     exit();
 }
+$env['now'] = time();
 
 // Access log
 writeLog("+ {$_SERVER['REQUEST_URI']}");

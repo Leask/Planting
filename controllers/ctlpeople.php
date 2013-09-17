@@ -4,9 +4,34 @@ class CtlPeople extends Controller {
 
     public function actSignin() {
         $inputs = $this->getInputs([
-            'user_name' => ['get', 'int'],
+            'screen_name' => ['json'],
+            'external_id' => ['json'],
+            'provider'    => ['json'],
+            'password'    => ['json'],
         ]);
-        print_r($inputs);
+        $libPeople = new LibPeople();
+        if ($inputs['screen_name']) {
+            $sinResult = $libPeople->sigininByScreenNameAndPassword(
+                $inputs['screen_name'], $inputs['password']
+            );
+        } else if ($inputs['external_id'] && $inputs['provider']) {
+            $sinResult = $libPeople->sigininByExternalIdAndProviderAndPassword(
+                $inputs['external_id'],
+                $inputs['provider'],
+                $inputs['password']
+            );
+        } else {
+            $this->jsonError(400, 'invalid_signin_infos');
+            return;
+        }
+        if (@$sinResult['error']) {
+            $this->jsonError(
+                $sinResult['error'] === 'server_error' ? 500 : 400,
+                $sinResult['error']
+            );
+            return;
+        }
+        $this->jsonResponse($sinResult['authorization']);
     }
 
 

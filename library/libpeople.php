@@ -77,7 +77,7 @@ class LibPeople {
 
     static function validate($person) {
         if (!$person || !is_array($person)) {
-            return ['error' => 'error_person'];
+            return ['error' => 'invalid_person'];
         }
         $result = [];
 
@@ -85,7 +85,7 @@ class LibPeople {
         if (lenLimit($person['screen_name'], 3, 14)) {
             $result['screen_name'] = DBio::escape($person['screen_name']);
         } else {
-            return ['error' => 'error_screen_name'];
+            return ['error' => 'invalid_screen_name'];
         }
 
         if (isset($person['name'])) {
@@ -93,7 +93,7 @@ class LibPeople {
             if (lenLimit($person['name'], 1, 21)) {
                 $result['name'] = DBio::escape($person['name']);
             } else {
-                return ['error' => 'error_name'];
+                return ['error' => 'invalid_name'];
             }
         } else {
             $result['name'] = $result['screen_name'];
@@ -104,7 +104,7 @@ class LibPeople {
             if (lenLimit($person['description'], 0, 140)) {
                 $result['description'] = DBio::escape($person['description']);
             } else {
-                return ['error' => 'error_name'];
+                return ['error' => 'invalid_name'];
             }
         } else {
             $result['description'] = '';
@@ -130,17 +130,17 @@ class LibPeople {
                 if ($person['external_id']) {
                     $result['external_id'] = DBio::escape($person['external_id']);
                 } else {
-                    return ['error' => 'error_external_id'];
+                    return ['error' => 'invalid_external_id'];
                 }
                 break;
             default:
-                return ['error' => 'error_provider'];
+                return ['error' => 'invalid_provider'];
         }
 
         if (@lenLimit($person['password'], 4, 256)) {
             $result['password'] = $person['password'];
         } else {
-            return ['error' => 'error_password'];
+            return ['error' => 'invalid_password'];
         }
 
         return ['person' => $result];
@@ -187,6 +187,80 @@ class LibPeople {
             if (($person = self::getById($rawResult['insert_id']))) {
                 return ['person' => $person];
             }
+        }
+        return ['error' => 'server_error'];
+    }
+
+
+    public function validatePassword($password, $salt, $encryptedPassword) {
+        return $this->encryptPassword($password, $salt) === $encryptedPassword;
+    }
+
+
+    public function checkPassword($person, $password) {
+        if (!$person) {
+            return ['error' => 'invalid_person'];
+        }
+        if (!$password) {
+            return ['error' => 'invalid_password'];
+        }
+        if (!$person['password'] || !$person['salt']) {
+            return ['error' => 'no_password'];
+        }
+        if (!$this->validatePassword(
+            $password, $person['salt'], $person['password']
+        )) {
+            return ['error' => 'invalid_password'];
+        }
+        return ['error' => ''];
+    }
+
+
+    public function sigininByScreenNameAndPassword($screen_name, $password) {
+        $person = $this->getByScreenName($screen_name, true);
+        $chkPassword = $this->checkPassword($person, $password);
+        if (@$chkPassword['error']) {
+            return $chkPassword;
+        }
+        return $this->signin($person['id']);
+    }
+
+
+    public function sigininByExternalIdAndProviderAndPassword(
+        $external_id, $provider, $password
+    ) {
+        $person = $this->getByExternalIdAndProvider(
+            $external_id, $provider, true
+        );
+        $chkPassword = $this->checkPassword($person, $password);
+        if (@$chkPassword['error']) {
+            return $chkPassword;
+        }
+        return $this->signin($person['id']);
+    }
+
+
+    public function signin($id) {
+        global $env;
+        $person = self::getById($id, true);
+        if ($person) {
+            $tkResult = LibToken::create(
+                $person['id'], '', 'person_token',
+                ['person_id' => $person['id'], 'category' => 'person_token'],
+                '', [], $env['person_token_expires_in']
+            );
+            if (@$tkResult['error']) {
+                return $tkResult;
+            }
+            return ['authorization' => [
+                'code'       => $tkResult['token']['code'],
+                'person_id'  => $tkResult['token']['person_id'],
+                'category'   => $tkResult['token']['category'],
+                'scope'      => $tkResult['token']['scope'],
+                'created_at' => $tkResult['token']['created_at'],
+                'expires_at' => $tkResult['token']['expires_at'],
+                'class'      => 'authorization',
+            ]];
         }
         return ['error' => 'server_error'];
     }
