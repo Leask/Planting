@@ -55,4 +55,14 @@ class CtlPeople extends Controller {
         $this->jsonResponse($vldResult['person']);
     }
 
+
+    public function actMe() {
+        $person = LibPeople::getById($this->token['person_id']);
+        if ($person) {
+            $this->jsonResponse($person);
+            return;
+        }
+        $this->jsonError(404, 'person_not_found');
+    }
+
 }

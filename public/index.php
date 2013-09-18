@@ -17,9 +17,10 @@ if (!$env) {
     exit();
 }
 $env['now'] = time();
+$env['uri'] = $_SERVER['REQUEST_URI'];
 
 // Access log
-Core::log("+ {$_SERVER['REQUEST_URI']}");
+Core::log("+ {$env['uri']}");
 
 // Access Control Allow
 Core::aca($env['web_url']);
@@ -30,9 +31,7 @@ if (!$routes) {
     Core::log('Error routes.json!');
     exit();
 }
-$path = Core::route(
-    $_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], $routes
-);
+$path = Core::route($_SERVER['REQUEST_METHOD'], $env['uri'], $routes);
 if ($path) {
     Core::dispatch($path);
 } else {
@@ -41,4 +40,4 @@ if ($path) {
 }
 
 // Access log
-Core::log("- {$_SERVER['REQUEST_URI']}");
+Core::log("- {$env['uri']}");

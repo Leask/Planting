@@ -22,7 +22,14 @@
     },
     {
         "methods"        : [],
-        "patterns"       : ["\/^\\/v1\\/people\\/(me|\\d+)$\/"],
+        "patterns"       : ["\/^\\/v1\\/people\\/me(\\?.*)?$\/"],
+        "controller"     : "people",
+        "action"         : "me",
+        "authentication" : ["person"]
+    },
+    {
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/people\\/\\d+(\\?.*)?$\/"],
         "controller"     : "people",
         "action"         : "get",
         "authentication" : ["person"]

@@ -130,6 +130,9 @@ abstract class Controller {
 
 
     public function __construct($parameters = []) {
+        if (isset($parameters['uri'])) {
+            $this->uri   = $parameters['uri'];
+        }
         if (isset($parameters['token'])) {
             $this->token = $parameters['token'];
         }

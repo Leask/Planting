@@ -113,14 +113,15 @@ class Core {
 
 
     static function dispatch($path) {
-        $parameters = [];
+        global $env;
+        $parameters = ['uri' => $env['uri']];
         if ($path['authentication']) {
             $chkResult = self::checkToken(
                 @$_GET['token'], $path['authentication']
             );
             if (@$chkResult['error']) {
-                // chkResult['error']
-                // chkResult['code']
+                // @todo: chkResult['error']
+                // @todo: chkResult['code']
                 return;
             } else if (@$chkResult['token']) {
                 $parameters['token'] = $chkResult['token'];
