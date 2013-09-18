@@ -2,6 +2,8 @@
 
 abstract class Controller {
 
+    protected $token    = null;
+
     protected $uri      = '';
 
     protected $timezone = '';
@@ -124,6 +126,13 @@ abstract class Controller {
             $inputs[$rI] = $value;
         }
         return $inputs;
+    }
+
+
+    public function __construct($parameters = []) {
+        if (isset($parameters['token'])) {
+            $this->token = $parameters['token'];
+        }
     }
 
 }

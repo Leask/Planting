@@ -30,13 +30,11 @@ if (!$routes) {
     Core::log('Error routes.json!');
     exit();
 }
-$path = Core::route($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], $routes);
+$path = Core::route(
+    $_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI'], $routes
+);
 if ($path) {
-    $ctlName = "Ctl{$path['controller']}";
-    $actName = "act{$path['action']}";
-    Core::load("controllers/{$ctlName}.php");
-    $controller = new $ctlName();
-    $controller->$actName();
+    Core::dispatch($path);
 } else {
     echo 404;
     // 404;

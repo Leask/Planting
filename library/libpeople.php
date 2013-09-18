@@ -245,15 +245,15 @@ class LibPeople {
         $person = self::getById($id, true);
         if ($person) {
             $tkResult = LibToken::create(
-                $person['id'], '', 'person_token',
-                ['person_id' => $person['id'], 'category' => 'person_token'],
+                $person['id'], '', 'person',
+                ['person_id' => $person['id'], 'category' => 'person'],
                 '', [], $env['person_token_expires_in']
             );
             if (@$tkResult['error']) {
                 return $tkResult;
             }
             return ['authorization' => [
-                'code'       => $tkResult['token']['code'],
+                'token'      => $tkResult['token']['code'],
                 'person_id'  => $tkResult['token']['person_id'],
                 'category'   => $tkResult['token']['category'],
                 'scope'      => $tkResult['token']['scope'],

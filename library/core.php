@@ -68,4 +68,69 @@ class Core {
         return self::isoTime(strtotime($strTime));
     }
 
+
+    static function rawCheckToken($token, $authItem) {
+        global $env;
+        switch ($authItem) {
+            case 'fresh_person':
+                if ($env['now'] - strtotime($token['created_at']) > 15) {
+                    return ['error' => 'token_staled'];
+                }
+            case 'person':
+                if ($token['category'] !== 'person') {
+                    return null;
+                }
+                break;
+            case 'verification':
+                if ($token['category'] !== 'verification') {
+                    return null;
+                }
+        }
+        return ['error' => ''];
+    }
+
+
+    static function checkToken($code, $authentication) {
+        if ($authentication) {
+            if (!$code) {
+                return ['error' => 'authentication_required', 'code' => 401];
+            }
+            if (!($token = LibToken::getByCode($code))) {
+                return ['error' => 'authentication_required', 'code' => 401];
+            }
+            foreach ($authentication ?: [] as $authItem) {
+                $chkResult = self::rawCheckToken($token, $authItem);
+                if ($chkResult === null) {
+                } else if (@$chkResult['error']) {
+                    return ['error' => $chkResult['error'],   'code' => 403];
+                }
+                return ['token' => $token];
+            }
+            return ['error' => 'token_category_not_matched',  'code' => 403];
+        }
+        return ['error' => ''];
+    }
+
+
+    static function dispatch($path) {
+        $parameters = [];
+        if ($path['authentication']) {
+            $chkResult = self::checkToken(
+                @$_GET['token'], $path['authentication']
+            );
+            if (@$chkResult['error']) {
+                // chkResult['error']
+                // chkResult['code']
+                return;
+            } else if (@$chkResult['token']) {
+                $parameters['token'] = $chkResult['token'];
+            }
+        }
+        $ctlName = "Ctl{$path['controller']}";
+        $actName = "act{$path['action']}";
+        self::load("controllers/{$ctlName}.php");
+        $controller = new $ctlName($parameters);
+        $controller->$actName();
+    }
+
 }

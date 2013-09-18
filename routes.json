@@ -1,26 +1,30 @@
 [
     {
-        "methods"    : [],
-        "patterns"   : ["\/^\\/(\\?.*)?$\/"],
-        "controller" : "home",
-        "action"     : "index"
+        "methods"        : [],
+        "patterns"       : ["\/^\\/(\\?.*)?$\/"],
+        "controller"     : "home",
+        "action"         : "index",
+        "authentication" : []
     },
     {
-        "methods"    : ["POST", "PUT"],
-        "patterns"   : ["\/^\\/v1\\/people\\/signin(\\?.*)?$\/"],
-        "controller" : "people",
-        "action"     : "signin"
+        "methods"        : ["POST", "PUT"],
+        "patterns"       : ["\/^\\/v1\\/people\\/signin(\\?.*)?$\/"],
+        "controller"     : "people",
+        "action"         : "signin",
+        "authentication" : []
     },
     {
-        "methods"    : ["POST", "PUT"],
-        "patterns"   : ["\/^\\/v1\\/people\\/signup(\\?.*)?$\/"],
-        "controller" : "people",
-        "action"     : "signup"
+        "methods"        : ["POST", "PUT"],
+        "patterns"       : ["\/^\\/v1\\/people\\/signup(\\?.*)?$\/"],
+        "controller"     : "people",
+        "action"         : "signup",
+        "authentication" : []
     },
     {
-        "methods"    : [],
-        "patterns"   : ["\/^v1\\/people\\/[^\\/]*(\\?.*)?$\/"],
-        "controller" : "people",
-        "action"     : "get"
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/people\\/(me|\\d+)$\/"],
+        "controller"     : "people",
+        "action"         : "get",
+        "authentication" : ["person"]
     }
 ]

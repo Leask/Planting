@@ -63,6 +63,13 @@ class LibToken {
     }
 
 
+    static function touchToken($id) {
+        return ($id = (int) $id) ? Dbio::execute(
+            "UPDATE `tokens` SET `touched_at` = NOW() WHERE `id` = {$id};"
+        ) : null;
+    }
+
+
     static function getById($id) {
         $id = (int) $id;
         if ($id) {
@@ -83,7 +90,10 @@ class LibToken {
                 "SELECT * FROM `tokens`
                  WHERE `code` = '{$code}' AND `expires_at` > NOW();"
             );
-            return self::pack($rawToken);
+            if ($rawToken) {
+                self::touchToken($rawToken['id']);
+                return self::pack($rawToken);
+            }
         }
         return null;
     }
