@@ -115,7 +115,8 @@ class LibNode {
             $rawNodes  = Dbio::query(
                 "SELECT * FROM `nodes`
                  WHERE `created_by` = {$person_id}
-                 AND   `status`     = {$statusIdx};"
+                 AND   `status`     = {$statusIdx}
+                 ORDER BY `when` DESC;"
             );
             return self::multiPack($rawNodes);
         }
