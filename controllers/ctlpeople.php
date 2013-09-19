@@ -11,13 +11,13 @@ class CtlPeople extends Controller {
         ]))) {
             return;
         }
-        $libPeople = new LibPeople();
+        $libPerson = new LibPerson();
         if ($inputs['screen_name']) {
-            $sinResult = $libPeople->sigininByScreenNameAndPassword(
+            $sinResult = $libPerson->sigininByScreenNameAndPassword(
                 $inputs['screen_name'], $inputs['password']
             );
         } else if ($inputs['external_id'] && $inputs['provider']) {
-            $sinResult = $libPeople->sigininByExternalIdAndProviderAndPassword(
+            $sinResult = $libPerson->sigininByExternalIdAndProviderAndPassword(
                 $inputs['external_id'],
                 $inputs['provider'],
                 $inputs['password']
@@ -43,26 +43,31 @@ class CtlPeople extends Controller {
         ]))) {
             return;
         }
-        $libPeople = new LibPeople();
-        $vldResult = $libPeople->create($inputs['person']);
-        if (@$vldResult['error']) {
+        $libPerson = new LibPerson();
+        $supResult = $libPerson->create($inputs['person']);
+        if (@$supResult['error']) {
             $this->jsonError(
-                $vldResult['error'] === 'server_error' ? 500 : 400,
-                $vldResult['error']
+                $supResult['error'] === 'server_error' ? 500 : 400,
+                $supResult['error']
             );
             return;
         }
-        $this->jsonResponse($vldResult['person']);
+        $this->jsonResponse($supResult['person']);
     }
 
 
     public function actMe() {
-        $person = LibPeople::getById($this->token['person_id']);
+        $person = LibPerson::getById($this->token['person_id']);
         if ($person) {
             $this->jsonResponse($person);
             return;
         }
         $this->jsonError(404, 'person_not_found');
+    }
+
+
+    public function actGet() {
+
     }
 
 }

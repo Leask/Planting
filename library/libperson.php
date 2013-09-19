@@ -1,6 +1,6 @@
 <?php
 
-class LibPeople {
+class LibPerson {
 
     private $salt = '7e32b7639cdfe0f8a92d2d76d2b9a357';
 
@@ -82,33 +82,30 @@ class LibPeople {
         $result = [];
 
         $person['screen_name'] = @trim($person['screen_name']);
-        if (Core::lenLimit($person['screen_name'], 3, 14)) {
-            $result['screen_name'] = DBio::escape($person['screen_name']);
-        } else {
+        if (!Core::lenLimit($person['screen_name'], 3, 14)) {
             return ['error' => 'invalid_screen_name'];
         }
+        $result['screen_name'] = DBio::escape($person['screen_name']);
 
         if (isset($person['name'])) {
             $person['name'] = @trim($person['name']);
-            if (Core::lenLimit($person['name'], 1, 21)) {
-                $result['name'] = DBio::escape($person['name']);
-            } else {
+            if (!Core::lenLimit($person['name'], 1, 21)) {
                 return ['error' => 'invalid_name'];
             }
         } else {
             $result['name'] = $result['screen_name'];
         }
+        $result['name'] = DBio::escape($person['name']);
 
         if (isset($person['description'])) {
             $person['description'] = @trim($person['description']);
-            if (Core::lenLimit($person['description'], 0, 140)) {
-                $result['description'] = DBio::escape($person['description']);
-            } else {
+            if (!Core::lenLimit($person['description'], 0, 140)) {
                 return ['error' => 'invalid_name'];
             }
         } else {
             $result['description'] = '';
         }
+        $result['description'] = DBio::escape($person['description']);
 
         if (isset($person['avatar'])) {
             $result['avatar'] = DBio::escape(@trim($person['avatar']));

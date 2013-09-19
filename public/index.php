@@ -17,7 +17,7 @@ if (!$env) {
     exit();
 }
 $env['now'] = time();
-$env['uri'] = $_SERVER['REQUEST_URI'];
+$env['uri'] = strtolower(trim($_SERVER['REQUEST_URI']));
 
 // Access log
 Core::log("+ {$env['uri']}");

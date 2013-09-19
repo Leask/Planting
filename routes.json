@@ -1,37 +1,65 @@
 [
     {
-        "methods"        : [],
-        "patterns"       : ["\/^\\/(\\?.*)?$\/"],
         "controller"     : "home",
         "action"         : "index",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/(\\?.*)?$\/"],
         "authentication" : []
     },
     {
-        "methods"        : ["POST", "PUT"],
-        "patterns"       : ["\/^\\/v1\\/people\\/signin(\\?.*)?$\/"],
         "controller"     : "people",
         "action"         : "signin",
+        "methods"        : ["POST", "PUT"],
+        "patterns"       : ["\/^\\/v1\\/people\\/signin(\\?.*)?$\/"],
         "authentication" : []
     },
     {
-        "methods"        : ["POST", "PUT"],
-        "patterns"       : ["\/^\\/v1\\/people\\/signup(\\?.*)?$\/"],
         "controller"     : "people",
         "action"         : "signup",
+        "methods"        : ["POST", "PUT"],
+        "patterns"       : ["\/^\\/v1\\/people\\/signup(\\?.*)?$\/"],
         "authentication" : []
     },
     {
-        "methods"        : [],
-        "patterns"       : ["\/^\\/v1\\/people\\/me(\\?.*)?$\/"],
         "controller"     : "people",
         "action"         : "me",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/people\\/me(\\?.*)?$\/"],
         "authentication" : ["person"]
     },
     {
-        "methods"        : [],
-        "patterns"       : ["\/^\\/v1\\/people\\/\\d+(\\?.*)?$\/"],
         "controller"     : "people",
         "action"         : "get",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/people\\/\\d+(\\?.*)?$\/"],
+        "authentication" : ["person"]
+    },
+    {
+        "controller"     : "nodes",
+        "action"         : "plant",
+        "methods"        : ["POST", "PUT"],
+        "patterns"       : ["\/^\\/v1\\/nodes\\/plant(\\?.*)?$\/"],
+        "authentication" : ["person"]
+    },
+    {
+        "controller"     : "nodes",
+        "action"         : "home",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/nodes\\/home(\\?.*)?$\/"],
+        "authentication" : ["person"]
+    },
+    {
+        "controller"     : "nodes",
+        "action"         : "me",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/nodes\\/home(\\?.*)?$\/"],
+        "authentication" : ["person"]
+    },
+    {
+        "controller"     : "nodes",
+        "action"         : "touched",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/nodes\\/home(\\?.*)?$\/"],
         "authentication" : ["person"]
     }
 ]
