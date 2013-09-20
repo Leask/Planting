@@ -1,6 +1,6 @@
 {
     "node_name"   : "CareNode",
-    "root_domain" : ".carenodeapp.com",
+    "root_domain" : ".carenodes.com",
     "web_url"     : "http://leask.carenodes.com",
     "api_url"     : "http://api.leask.carenodes.com",
     "app_schema"  : "carenode",
