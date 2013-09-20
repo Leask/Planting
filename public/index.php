@@ -6,7 +6,7 @@
  */
 
 // Initialization
-define('ROOT', "{$_SERVER['DOCUMENT_ROOT']}/../");
+define('ROOT', "{$_SERVER['DOCUMENT_ROOT']}../");
 // Automatic load class
 function __autoload($className) {
     include_once ROOT . 'library/' . strtolower($className) . '.php';

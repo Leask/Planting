@@ -127,7 +127,7 @@ class Core {
                 $parameters['token'] = $chkResult['token'];
             }
         }
-        $ctlName = "Ctl{$path['controller']}";
+        $ctlName = "ctl{$path['controller']}";
         $actName = "act{$path['action']}";
         self::load("controllers/{$ctlName}.php");
         $controller = new $ctlName($parameters);
