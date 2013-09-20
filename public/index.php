@@ -19,6 +19,24 @@ if (!$env) {
 $env['now'] = time();
 $env['uri'] = strtolower(trim($_SERVER['REQUEST_URI']));
 
+
+// {
+# magic_quotes_gpc = Off
+# zlib.output_compression = On
+# zlib.output_handler = On
+# ini_set('error_reporting', E_ALL);
+# ini_set('date.timezone', 'UTC');
+error_reporting(E_ALL ^ E_NOTICE);
+date_default_timezone_set('UTC');
+set_time_limit(3);
+ini_set('post_max_size', '15M');
+ini_set('upload_max_filesize', '15M');
+ini_set('session.cookie_domain', '.carenodes.com');
+ini_set('log_errors', 'On');
+ini_set('error_log', '/var/log/php.log');
+// }
+
+
 // Access log
 Core::log("+ {$env['uri']}");
 
