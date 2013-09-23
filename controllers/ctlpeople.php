@@ -68,7 +68,15 @@ class CtlPeople extends Controller {
 
 
     public function actGet() {
-
+        $mdlPerson = new MdlPerson();
+        $person = $mdlPerson->getById(
+            (int) preg_replace('/.*\/(\d+)/', '$1', $this->uri)
+        );
+        if ($person) {
+            $this->jsonResponse($person);
+            return;
+        }
+        $this->jsonError(404, 'person_not_found');
     }
 
 }
