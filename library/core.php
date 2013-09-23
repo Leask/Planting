@@ -95,7 +95,8 @@ class Core {
             if (!$code) {
                 return ['error' => 'authentication_required', 'code' => 401];
             }
-            if (!($token = MdlToken::getByCode($code))) {
+            $mdlToken = new MdlToken();
+            if (!($token = $mdlToken->getByCode($code))) {
                 return ['error' => 'authentication_required', 'code' => 401];
             }
             foreach ($authentication ?: [] as $authItem) {

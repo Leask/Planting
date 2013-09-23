@@ -5,7 +5,44 @@ class MdlPerson extends model {
     private $salt = '7e32b7639cdfe0f8a92d2d76d2b9a357';
 
 
-    static function pack($rawPeople) {
+    private function encryptPassword($password, $salt) {
+        global $env;
+        return md5("{$env['salt']}{$password}{$this->salt}{$salt}");
+    }
+
+
+    private function validatePassword($password, $salt, $encryptedPassword) {
+        return $this->encryptPassword($password, $salt) === $encryptedPassword;
+    }
+
+
+    private function checkPassword($person, $password) {
+        if (!$person) {
+            return ['error' => 'invalid_person'];
+        }
+        if (!$password) {
+            return ['error' => 'invalid_password'];
+        }
+        if (!$person['password'] || !$person['salt']) {
+            return ['error' => 'no_password'];
+        }
+        if (!$this->validatePassword(
+            $password, $person['salt'], $person['password']
+        )) {
+            return ['error' => 'invalid_password'];
+        }
+        return ['error' => ''];
+    }
+
+
+    static function validateEmail($email) {
+        $email   = strtolower(trim($email));
+        $pattern = '/^[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/';
+        return preg_match($pattern, $email) ? $email : null;
+    }
+
+
+    protected function pack($rawPeople) {
         return $rawPeople ? [
             'id'          => (int) $rawPeople['id'],
             'external_id' => $rawPeople['external_id'],
@@ -24,37 +61,30 @@ class MdlPerson extends model {
     }
 
 
-    static function validateEmail($email) {
-        $email   = strtolower(trim($email));
-        $pattern = '/^[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/';
-        return preg_match($pattern, $email) ? $email : null;
-    }
-
-
-    static function getById($id, $raw = false) {
+    public function getById($id, $raw = false) {
         if (($id = (int) $id)) {
             $curPerson = Dbio::queryRow(
                 "SELECT * FROM `people` WHERE `id` = {$id};"
             );
-            return $raw ? $curPerson : self::pack($curPerson);
+            return $raw ? $curPerson : $this->pack($curPerson);
         }
         return null;
     }
 
 
-    static function getByScreenName($screen_name, $raw = false) {
+    public function getByScreenName($screen_name, $raw = false) {
         $screen_name = Dbio::escape(strtolower(trim($screen_name)));
         if (Core::length($screen_name)) {
             $curPerson = Dbio::queryRow(
                 "SELECT * FROM `people` WHERE `screen_name` = '{$screen_name}';"
             );
-            return $raw ? $curPerson : self::pack($curPerson);
+            return $raw ? $curPerson : $this->pack($curPerson);
         }
         return null;
     }
 
 
-    static function getByExternalIdAndProvider(
+    public function getByExternalIdAndProvider(
         $external_id, $provider, $raw = true
     ) {
         $provider = Dbio::escape(strtolower(trim($provider)));
@@ -69,13 +99,13 @@ class MdlPerson extends model {
                  WHERE `external_id` = '{$external_id}'
                  AND   `provider`    =  '{$provider}';"
             );
-            return $raw ? $curPerson : self::pack($curPerson);
+            return $raw ? $curPerson : $this->pack($curPerson);
         }
         return null;
     }
 
 
-    static function validate($person) {
+    public function validate($person) {
         if (!$person || !is_array($person)) {
             return ['error' => 'invalid_person'];
         }
@@ -105,10 +135,10 @@ class MdlPerson extends model {
         } else {
             $result['description'] = '';
         }
-        $result['description'] = DBio::escape($person['description']);
+        $result['description'] = Dbio::escape($person['description']);
 
         if (isset($person['avatar'])) {
-            $result['avatar'] = DBio::escape(@trim($person['avatar']));
+            $result['avatar'] = Dbio::escape(@trim($person['avatar']));
         } else {
             $result['avatar'] = '';
         }
@@ -123,7 +153,7 @@ class MdlPerson extends model {
         switch ($person['provider']) {
             case 'email':
                 $result['provider'] = $person['provider'];
-                $person['external_id'] = self::validateEmail($person['external_id']);
+                $person['external_id'] = $this->validateEmail($person['external_id']);
                 if ($person['external_id']) {
                     $result['external_id'] = DBio::escape($person['external_id']);
                 } else {
@@ -144,14 +174,8 @@ class MdlPerson extends model {
     }
 
 
-    protected function encryptPassword($password, $salt) {
-        global $env;
-        return md5("{$env['salt']}{$password}{$this->salt}{$salt}");
-    }
-
-
     public function create($person) {
-        $vldResult = self::validate($person);
+        $vldResult = $this->validate($person);
         if (@$vldResult['error']) {
             return $vldResult;
         }
@@ -180,36 +204,7 @@ class MdlPerson extends model {
              `salt`        = '{$salt}',
              `updated_at`  = NOW();"
         );
-        if ($rawResult) {
-            if (($person = self::getById($rawResult['insert_id']))) {
-                return ['person' => $person];
-            }
-        }
-        return ['error' => 'server_error'];
-    }
-
-
-    public function validatePassword($password, $salt, $encryptedPassword) {
-        return $this->encryptPassword($password, $salt) === $encryptedPassword;
-    }
-
-
-    public function checkPassword($person, $password) {
-        if (!$person) {
-            return ['error' => 'invalid_person'];
-        }
-        if (!$password) {
-            return ['error' => 'invalid_password'];
-        }
-        if (!$person['password'] || !$person['salt']) {
-            return ['error' => 'no_password'];
-        }
-        if (!$this->validatePassword(
-            $password, $person['salt'], $person['password']
-        )) {
-            return ['error' => 'invalid_password'];
-        }
-        return ['error' => ''];
+        return $this->packInserted($rawResult, 'person');
     }
 
 
@@ -239,9 +234,10 @@ class MdlPerson extends model {
 
     public function signin($id) {
         global $env;
-        $person = self::getById($id, true);
+        $person = $this->getById($id, true);
         if ($person) {
-            $tkResult = MdlToken::create(
+            $mdlToken = new MdlToken();
+            $tkResult = $mdlToken->create(
                 $person['id'], '', 'person',
                 ['person_id' => $person['id'], 'category' => 'person'],
                 '', [], $env['person_token_expires_in']

@@ -57,7 +57,8 @@ class CtlPeople extends Controller {
 
 
     public function actMe() {
-        $person = MdlPerson::getById($this->token['person_id']);
+        $mdlPerson = new MdlPerson();
+        $person = $mdlPerson->getById($this->token['person_id']);
         if ($person) {
             $this->jsonResponse($person);
             return;

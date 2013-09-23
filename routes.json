@@ -72,7 +72,7 @@
     {
         "controller"     : "friendships",
         "action"         : "destroy",
-        "methods"        : ["DEL"],
+        "methods"        : ["DELETE"],
         "patterns"       : ["\/^\\/v1\\/friendships(\\?.*)?$\/"],
         "authentication" : ["person"]
     }

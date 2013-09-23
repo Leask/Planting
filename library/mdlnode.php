@@ -2,15 +2,16 @@
 
 class MdlNode extends model {
 
-    static $statuses = ['normal', 'deleted'];
+    protected $statuses = ['normal', 'deleted'];
 
 
-    static function pack($rawNode) {
+    protected function pack($rawNode) {
+        $mdlPerson = new MdlPerson();
         return $rawNode ? [
             'id'       => (int) $rawNode['id'],
             'when'     => Core::dbTimeToIsoTime($rawNode['when']),
             'what'     => $rawNode['what'],
-            'who'      => MdlPerson::getById($rawNode['created_by']),
+            'who'      => $mdlPerson->getById($rawNode['created_by']),
             'reply_to' => null,
             'caring'   => [],
             'class'    => 'node',
@@ -18,21 +19,7 @@ class MdlNode extends model {
     }
 
 
-    static function multiPack($rawNodes) {
-        if (is_array($rawNodes)) {
-            $nodes = [];
-            foreach ($rawNodes as $rawNode) {
-                if (($node = self::pack($rawNode))) {
-                    $nodes[] = $node;
-                }
-            }
-            return $nodes;
-        }
-        return null;
-    }
-
-
-    static function validate($node) {
+    public function validate($node) {
         global $env;
         if (!$node || !is_array($node)) {
             return ['error' => 'invalid_node'];
@@ -48,7 +35,7 @@ class MdlNode extends model {
         if (!Core::lenLimit($node['what'], 1, 140)) {
             return ['error' => 'invalid_what'];
         }
-        $result['what'] = DBio::escape($node['what']);
+        $result['what'] = Dbio::escape($node['what']);
 
         $node['when_timestamp'] = strtotime($node['when']);
         if ($env['now'] > $node['when_timestamp']) {
@@ -57,6 +44,21 @@ class MdlNode extends model {
         $result['when_timestamp'] = $node['when_timestamp'];
 
         return ['node' => $result];
+    }
+
+
+    public function getById($id) {
+        $id = (int) $id;
+        if ($id) {
+            $statusIdx = $this->getStatusIdxByStatus('normal');
+            $rawNode   = Dbio::queryRow(
+                "SELECT * FROM `nodes`
+                 WHERE `id`     = {$id}
+                 AND   `status` = {$statusIdx};"
+            );
+            return $this->pack($rawNode);
+        }
+        return null;
     }
 
 
@@ -73,27 +75,7 @@ class MdlNode extends model {
              `created_by` =  {$node['who_id']},
              `updated_at` =  NOW();"
         );
-        if ($rawResult) {
-            if (($node = self::getById($rawResult['insert_id']))) {
-                return ['node' => $node];
-            }
-        }
-        return ['error' => 'server_error'];
-    }
-
-
-    public function getById($id) {
-        $id = (int) $id;
-        if ($id) {
-            $statusIdx = $this->getStatusIdxByStatus('normal');
-            $rawNode   = Dbio::queryRow(
-                "SELECT * FROM `nodes`
-                 WHERE `id`     = {$id}
-                 AND   `status` = {$statusIdx};"
-            );
-            return self::pack($rawNode);
-        }
-        return null;
+        return $this->packInserted($rawResult, 'node');
     }
 
 
@@ -107,7 +89,7 @@ class MdlNode extends model {
                  AND   `status`     = {$statusIdx}
                  ORDER BY `when` DESC;"
             );
-            return self::multiPack($rawNodes);
+            return $this->multiPack($rawNodes);
         }
         return null;
     }
