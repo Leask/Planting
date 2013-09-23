@@ -3,7 +3,9 @@
 class CtlFriendships extends Controller {
 
     public function actCreate() {
-        if (!($inputs = $this->getInputs(['person_id' => ['json']]))) {
+        if (!($inputs = $this->getInputs([
+            'person_id' => ['json']
+        ]))) {
             return;
         }
         $mdlFriendship = new MdlFriendship();
@@ -27,7 +29,9 @@ class CtlFriendships extends Controller {
 
 
     public function actDestroy() {
-        if (!($inputs = $this->getInputs(['person_id' => ['json']]))) {
+        if (!($inputs = $this->getInputs([
+            'person_id' => ['json']
+        ]))) {
             return;
         }
         $mdlFriendship = new MdlFriendship();
@@ -47,6 +51,54 @@ class CtlFriendships extends Controller {
             return;
         }
         $this->jsonResponse($rawResult['friendship']);
+    }
+
+
+    public function actFollowing() {
+        if (!($inputs = $this->getInputs([
+            'person_id' => ['get', '']
+        ]))) {
+            return;
+        }
+        $person_id = strtolower(trim($inputs['person_id']));
+        if ($person_id === 'me') {
+            if (!$this->token) {
+                $this->jsonError(401, 'authentication_required');
+                return;
+            }
+            $person_id = $this->token['person_id'];
+        }
+        $mdlFriendship = new MdlFriendship();
+        $rawResult = $mdlFriendship->getFollowingByPersonId($person_id);
+        if (@$rawResult['error']) {
+            $this->jsonError(400, $rawResult['error']);
+            return;
+        }
+        $this->jsonResponse($rawResult['following']);
+    }
+
+
+    public function actFollowers() {
+        if (!($inputs = $this->getInputs([
+            'person_id' => ['get', '']
+        ]))) {
+            return;
+        }
+        $person_id = strtolower(trim($inputs['person_id']));
+        if ($person_id === 'me') {
+            if (!$this->token) {
+                $this->jsonError(401, 'authentication_required');
+                return;
+            }
+            $person_id = $this->token['person_id'];
+        }
+        $mdlFriendship = new MdlFriendship();
+        $rawResult = $mdlFriendship->getFollowersByPersonId($person_id);
+        if (@$rawResult['error']) {
+            $this->jsonError(400, $rawResult['error']);
+            return;
+        }
+        $this->jsonResponse($rawResult['followers']);
     }
 
 }

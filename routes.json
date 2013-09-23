@@ -22,16 +22,9 @@
     },
     {
         "controller"     : "people",
-        "action"         : "me",
+        "action"         : "show",
         "methods"        : [],
-        "patterns"       : ["\/^\\/v1\\/people\\/me(\\?.*)?$\/"],
-        "authentication" : ["person"]
-    },
-    {
-        "controller"     : "people",
-        "action"         : "get",
-        "methods"        : [],
-        "patterns"       : ["\/^\\/v1\\/people\\/\\d+(\\?.*)?$\/"],
+        "patterns"       : ["\/^\\/v1\\/people\\/show(\\?.*)?$\/"],
         "authentication" : []
     },
     {
@@ -78,16 +71,16 @@
     },
     {
         "controller"     : "friendships",
-        "action"         : "myfollowing",
+        "action"         : "following",
         "methods"        : [],
-        "patterns"       : ["\/^\\/v1\\/following\\/me(\\?.*)?$\/"],
-        "authentication" : ["person"]
+        "patterns"       : ["\/^\\/v1\\/following\\/list(\\?.*)?$\/"],
+        "authentication" : []
     },
     {
         "controller"     : "friendships",
-        "action"         : "following",
+        "action"         : "followers",
         "methods"        : [],
-        "patterns"       : ["\/^\\/v1\\/following\\/me(\\?.*)?$\/"],
-        "authentication" : ["person"]
+        "patterns"       : ["\/^\\/v1\\/followers\\/list(\\?.*)?$\/"],
+        "authentication" : []
     }
 ]

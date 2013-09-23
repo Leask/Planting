@@ -90,13 +90,9 @@ class Core {
     }
 
 
-    static function checkToken($code, $authentication) {
+    static function checkToken($token, $authentication) {
         if ($authentication) {
-            if (!$code) {
-                return ['error' => 'authentication_required', 'code' => 401];
-            }
-            $mdlToken = new MdlToken();
-            if (!($token = $mdlToken->getByCode($code))) {
+            if (!$token) {
                 return ['error' => 'authentication_required', 'code' => 401];
             }
             foreach ($authentication ?: [] as $authItem) {
@@ -104,8 +100,9 @@ class Core {
                 if ($chkResult === null) {
                 } else if (@$chkResult['error']) {
                     return ['error' => $chkResult['error'],   'code' => 403];
+                } else {
+                    return ['error' => ''];
                 }
-                return ['token' => $token];
             }
             return ['error' => 'token_category_not_matched',  'code' => 403];
         }
@@ -115,17 +112,17 @@ class Core {
 
     static function dispatch($path) {
         global $env;
+        $mdlToken   = new MdlToken();
         $parameters = ['uri' => $env['uri']];
+        if (($token = $mdlToken->getByCode(@$_GET['token']))) {
+            $parameters['token'] = $token;
+        }
         if ($path['authentication']) {
-            $chkResult = self::checkToken(
-                @$_GET['token'], $path['authentication']
-            );
+            $chkResult = self::checkToken($token, $path['authentication']);
             if (@$chkResult['error']) {
                 // @todo: chkResult['error']
                 // @todo: chkResult['code']
                 return;
-            } else if (@$chkResult['token']) {
-                $parameters['token'] = $chkResult['token'];
             }
         }
         $ctlName = "ctl{$path['controller']}";

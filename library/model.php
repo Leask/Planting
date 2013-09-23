@@ -2,20 +2,6 @@
 
 abstract class Model {
 
-    protected function multiPack($rawObjects) {
-        if (is_array($rawObjects)) {
-            $objects = [];
-            foreach ($rawObjects as $rawObject) {
-                if (($object = $this->pack($rawObject))) {
-                    $objects[] = $object;
-                }
-            }
-            return $objects;
-        }
-        return null;
-    }
-
-
     protected function getStatusByStatusIdx($staticIdx) {
         return @$this->statuses[(int) $staticIdx];
     }
@@ -42,6 +28,20 @@ abstract class Model {
                 "SELECT * FROM `{$table}` WHERE `id` = {$id}{$where};"
             );
             return $raw ? $rawObject : $this->pack($rawObject);
+        }
+        return null;
+    }
+
+
+    public function multiPack($rawObjects) {
+        if (is_array($rawObjects)) {
+            $objects = [];
+            foreach ($rawObjects as $rawObject) {
+                if (($object = $this->pack($rawObject))) {
+                    $objects[] = $object;
+                }
+            }
+            return $objects;
         }
         return null;
     }

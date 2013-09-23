@@ -56,23 +56,22 @@ class CtlPeople extends Controller {
     }
 
 
-    public function actMe() {
-        $mdlPerson = new MdlPerson();
-        $person = $mdlPerson->getById($this->token['person_id']);
-        if ($person) {
-            $this->jsonResponse($person);
+    public function actShow() {
+        if (!($inputs = $this->getInputs([
+            'person_id' => ['get', '']
+        ]))) {
             return;
         }
-        $this->jsonError(404, 'person_not_found');
-    }
-
-
-    public function actGet() {
+        $person_id = strtolower(trim($inputs['person_id']));
+        if ($person_id === 'me') {
+            if (!$this->token) {
+                $this->jsonError(401, 'authentication_required');
+                return;
+            }
+            $person_id = $this->token['person_id'];
+        }
         $mdlPerson = new MdlPerson();
-        $person = $mdlPerson->getById(
-            (int) preg_replace('/.*\/(\d+)/', '$1', $this->uri)
-        );
-        if ($person) {
+        if (($person = $mdlPerson->getById($person_id))) {
             $this->jsonResponse($person);
             return;
         }

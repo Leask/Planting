@@ -31,25 +31,41 @@ class MdlFriendship extends model {
     }
 
 
-    public function getByPersonId($person_id, $raw = false) {
-        if (($person_id = (int) $person_id)) {
-            $rawFriendships = Dbio::queryRow(
-                "SELECT * FROM `friendships` AND `person_id` = {$person_id};"
-            );
-            return $this->multiPack($rawFriendships);
+    public function getFollowersByPersonId($person_id) {
+        $mdlPerson = new MdlPerson();
+        if (!($person_id = (int) $person_id)
+         || !$mdlPerson->getById($person_id)) {
+            return ['error' => 'invalid_person_id'];
         }
-        return null;
+        $statusIdx = $this->getStatusIdxByStatus('normal');
+        $rawPeople = Dbio::query(
+            "SELECT `p`.*
+             FROM   `friendships` AS `f`,
+                    `people`      AS `p`
+             WHERE  `f`.`person_id`  = {$person_id}
+             AND    `f`.`created_by` = `p`.`id`
+             AND    `f`.`status`     = {$statusIdx};"
+        );
+        return ['followers' => $mdlPerson->multiPack($rawPeople)];
     }
 
 
-    public function getByCreatedBy($created_by) {
-        if (($created_by = (int) $created_by)) {
-            $rawFriendships = Dbio::queryRow(
-                "SELECT * FROM `friendships` AND `created_by` = {$created_by};"
-            );
-            return $this->multiPack($rawFriendships);
+    public function getFollowingByPersonId($person_id) {
+        $mdlPerson = new MdlPerson();
+        if (!($person_id = (int) $person_id)
+         || !$mdlPerson->getById($person_id)) {
+            return ['error' => 'invalid_person_id'];
         }
-        return null;
+        $statusIdx = $this->getStatusIdxByStatus('normal');
+        $rawPeople = Dbio::query(
+            "SELECT `p`.*
+             FROM   `friendships` AS `f`,
+                    `people`      AS `p`
+             WHERE  `f`.`created_by` = {$person_id}
+             AND    `f`.`person_id`  = `p`.`id`
+             AND    `f`.`status`     = {$statusIdx};"
+        );
+        return ['following' => $mdlPerson->multiPack($rawPeople)];
     }
 
 

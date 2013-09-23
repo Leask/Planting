@@ -42,7 +42,7 @@ class MdlPerson extends model {
     }
 
 
-    protected function pack($rawPeople) {
+    public function pack($rawPeople) {
         return $rawPeople ? [
             'id'          => (int) $rawPeople['id'],
             'external_id' => $rawPeople['external_id'],
