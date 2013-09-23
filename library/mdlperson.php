@@ -1,6 +1,6 @@
 <?php
 
-class MdlPerson {
+class MdlPerson extends model {
 
     private $salt = '7e32b7639cdfe0f8a92d2d76d2b9a357';
 

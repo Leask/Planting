@@ -1,19 +1,8 @@
 <?php
 
-class MdlNode {
+class MdlNode extends model {
 
     static $statuses = ['normal', 'deleted'];
-
-
-    static function getStatusByStatusIdx($staticIdx) {
-        return @$statuses[(int) $staticIdx];
-    }
-
-
-    static function getStatusIdxByStatus($status) {
-        $statusIdx = array_search(strtolower(trim($status)), self::$statuses);
-        return $statusIdx === false ? null : $statusIdx;
-    }
 
 
     static function pack($rawNode) {

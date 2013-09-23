@@ -1,6 +1,6 @@
 <?php
 
-class MdlToken {
+class MdlToken extends model {
 
     static function create(
         $person_id, $client, $category, $resource, $scope, $data, $expires_in
