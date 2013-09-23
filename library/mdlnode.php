@@ -1,6 +1,6 @@
 <?php
 
-class LibNode {
+class MdlNode {
 
     static $statuses = ['normal', 'deleted'];
 
@@ -21,7 +21,7 @@ class LibNode {
             'id'       => (int) $rawNode['id'],
             'when'     => Core::dbTimeToIsoTime($rawNode['when']),
             'what'     => $rawNode['what'],
-            'who'      => LibPerson::getById($rawNode['created_by']),
+            'who'      => MdlPerson::getById($rawNode['created_by']),
             'reply_to' => null,
             'caring'   => [],
             'class'    => 'node',

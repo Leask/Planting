@@ -1,6 +1,6 @@
 <?php
 
-class LibToken {
+class MdlToken {
 
     static function create(
         $person_id, $client, $category, $resource, $scope, $data, $expires_in

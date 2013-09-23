@@ -11,13 +11,13 @@ class CtlPeople extends Controller {
         ]))) {
             return;
         }
-        $libPerson = new LibPerson();
+        $mdlPerson = new MdlPerson();
         if ($inputs['screen_name']) {
-            $sinResult = $libPerson->sigininByScreenNameAndPassword(
+            $sinResult = $mdlPerson->sigininByScreenNameAndPassword(
                 $inputs['screen_name'], $inputs['password']
             );
         } else if ($inputs['external_id'] && $inputs['provider']) {
-            $sinResult = $libPerson->sigininByExternalIdAndProviderAndPassword(
+            $sinResult = $mdlPerson->sigininByExternalIdAndProviderAndPassword(
                 $inputs['external_id'],
                 $inputs['provider'],
                 $inputs['password']
@@ -43,8 +43,8 @@ class CtlPeople extends Controller {
         ]))) {
             return;
         }
-        $libPerson = new LibPerson();
-        $supResult = $libPerson->create($inputs['person']);
+        $mdlPerson = new MdlPerson();
+        $supResult = $mdlPerson->create($inputs['person']);
         if (@$supResult['error']) {
             $this->jsonError(
                 $supResult['error'] === 'server_error' ? 500 : 400,
@@ -57,7 +57,7 @@ class CtlPeople extends Controller {
 
 
     public function actMe() {
-        $person = LibPerson::getById($this->token['person_id']);
+        $person = MdlPerson::getById($this->token['person_id']);
         if ($person) {
             $this->jsonResponse($person);
             return;

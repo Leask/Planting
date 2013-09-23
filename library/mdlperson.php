@@ -1,6 +1,6 @@
 <?php
 
-class LibPerson {
+class MdlPerson {
 
     private $salt = '7e32b7639cdfe0f8a92d2d76d2b9a357';
 
@@ -241,7 +241,7 @@ class LibPerson {
         global $env;
         $person = self::getById($id, true);
         if ($person) {
-            $tkResult = LibToken::create(
+            $tkResult = MdlToken::create(
                 $person['id'], '', 'person',
                 ['person_id' => $person['id'], 'category' => 'person'],
                 '', [], $env['person_token_expires_in']

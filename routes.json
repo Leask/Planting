@@ -61,5 +61,19 @@
         "methods"        : [],
         "patterns"       : ["\/^\\/v1\\/nodes\\/home(\\?.*)?$\/"],
         "authentication" : ["person"]
+    },
+    {
+        "controller"     : "friendships",
+        "action"         : "create",
+        "methods"        : ["POST", "PUT"],
+        "patterns"       : ["\/^\\/v1\\/friendships(\\?.*)?$\/"],
+        "authentication" : ["person"]
+    },
+    {
+        "controller"     : "friendships",
+        "action"         : "destroy",
+        "methods"        : ["DEL"],
+        "patterns"       : ["\/^\\/v1\\/friendships(\\?.*)?$\/"],
+        "authentication" : ["person"]
     }
 ]
