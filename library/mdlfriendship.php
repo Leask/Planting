@@ -87,7 +87,7 @@ class MdlFriendship extends model {
 
 
     public function create($created_by, $person_id) {
-        $mdlPerson  = new MdlPerson();
+        $mdlPerson = new MdlPerson();
         if (!($created_by = (int) $created_by)
          || !$mdlPerson->getById($created_by)) {
             return ['error' => 'invalid_created_by'];
@@ -112,10 +112,10 @@ class MdlFriendship extends model {
             $statusIdx = $this->getStatusIdxByStatus('normal');
             $rawResult = Dbio::execute(
                 "UPDATE `friendships`
-                 SET   `status`     = {$statusIdx},
-                       `updated_at` = NOW()
-                 WHERE `created_by` = {$created_by}
-                 AND   `person_id`  = {$person_id};"
+                 SET    `status`     = {$statusIdx},
+                        `updated_at` = NOW()
+                 WHERE  `created_by` = {$created_by}
+                 AND    `person_id`  = {$person_id};"
             );
             if (!$rawResult) {
                 return ['error' => 'server_error'];
@@ -135,7 +135,7 @@ class MdlFriendship extends model {
 
 
     public function destroy($created_by, $person_id) {
-        $mdlPerson  = new MdlPerson();
+        $mdlPerson = new MdlPerson();
         if (!($created_by = (int) $created_by)
          || !$mdlPerson->getById($created_by)) {
             return ['error' => 'invalid_created_by'];

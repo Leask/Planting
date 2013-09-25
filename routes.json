@@ -82,5 +82,19 @@
         "methods"        : [],
         "patterns"       : ["\/^\\/v1\\/followers\\/list(\\?.*)?$\/"],
         "authentication" : []
+    },
+    {
+        "controller"     : "caring",
+        "action"         : "create",
+        "methods"        : ["POST", "PUT"],
+        "patterns"       : ["\/^\\/v1\\/caring(\\?.*)?$\/"],
+        "authentication" : ["person"]
+    },
+    {
+        "controller"     : "caring",
+        "action"         : "destroy",
+        "methods"        : ["DELETE"],
+        "patterns"       : ["\/^\\/v1\\/caring(\\?.*)?$\/"],
+        "authentication" : ["person"]
     }
 ]
