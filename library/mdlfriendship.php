@@ -5,7 +5,7 @@ class MdlFriendship extends model {
     protected $statuses = ['normal', 'deleted'];
 
 
-    protected function pack($rawFriendship) {
+    protected function pack($rawFriendship, $person_id = 0) {
         if ($rawFriendship) {
             $mdlPerson  = new MdlPerson();
             $person     = $mdlPerson->getById($rawFriendship['person_id']);
@@ -26,7 +26,7 @@ class MdlFriendship extends model {
     }
 
 
-    public function getById($id, $raw = false) {
+    public function getById($id, $raw = false, $person_id = 0) {
         return $this->rawGetById('friendships', $id, $raw);
     }
 
@@ -57,6 +57,7 @@ class MdlFriendship extends model {
             return ['error' => 'invalid_person_id'];
         }
         $statusIdx = $this->getStatusIdxByStatus('normal');
+        // @todo: 拆分此处代码，因为打包请求在初期效率比较高，但不能高效利用缓存。
         $rawPeople = Dbio::query(
             "SELECT `p`.*
              FROM   `friendships` AS `f`,

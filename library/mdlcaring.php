@@ -5,7 +5,7 @@ class MdlCaring extends model {
     protected $statuses = ['normal', 'deleted'];
 
 
-    protected function pack($rawCaring) {
+    protected function pack($rawCaring, $person_id = 0) {
         if ($rawCaring) {
             $mdlNode    = new MdlNode();
             $mdlPerson  = new MdlPerson();
@@ -27,8 +27,15 @@ class MdlCaring extends model {
     }
 
 
-    public function getById($id, $raw = false) {
+    public function getById($id, $raw = false, $person_id = 0) {
         return $this->rawGetById('caring', $id, $raw);
+    }
+
+
+    public function checkCaringByCreatedByAndNodeId($created_by, $node_id) {
+        $rawResult = $this->getByCreatedByAndNodeId($created_by, $node_id);
+        $statusIdx = $this->getStatusIdxByStatus('normal');
+        return $rawResult && (int) $rawResult['status'] === $statusIdx;
     }
 
 
@@ -46,6 +53,18 @@ class MdlCaring extends model {
             return $raw ? $rawCaring : $this->pack($rawCaring);
         }
         return null;
+    }
+
+
+    public function rawCreate($created_by, $node_id) {
+        $created_by = (int) $created_by;
+        $node_id    = (int) $node_id;
+        return $created_by && $node_id ? Dbio::execute(
+            "INSERT INTO `caring` SET
+             `created_by` = {$created_by},
+             `node_id`    = {$node_id},
+             `updated_at` = NOW();"
+        ) : null;
     }
 
 
@@ -83,12 +102,7 @@ class MdlCaring extends model {
                 $created_by, $node_id
             )];
         }
-        $rawResult = Dbio::execute(
-            "INSERT INTO `caring` SET
-             `created_by` = {$created_by},
-             `node_id`    = {$node_id},
-             `updated_at` = NOW();"
-        );
+        $rawResult = $this->rawCreate($created_by, $node_id);
         return $this->packInserted($rawResult, 'caring');
     }
 

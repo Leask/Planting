@@ -2,7 +2,7 @@
 
 class MdlToken extends model {
 
-    protected function pack($rawToken) {
+    protected function pack($rawToken, $person_id = 0) {
         return $rawToken ? [
             'code'          => $rawToken['code'],
             'person_id'     => (int) $rawToken['person_id'],
@@ -27,7 +27,7 @@ class MdlToken extends model {
     }
 
 
-    public function getById($id) {
+    public function getById($id, $raw = false, $person_id = 0) {
         $id = (int) $id;
         if ($id) {
             $rawToken = Dbio::queryRow(

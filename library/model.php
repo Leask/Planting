@@ -13,9 +13,14 @@ abstract class Model {
     }
 
 
-    protected function packInserted($rawResult, $className = '') {
-        if ($rawResult && ($object = $this->getById($rawResult['insert_id']))) {
-            return $className ? [$className => $object] : $object;
+    protected function packInserted(
+        $rawResult, $className = '', $raw = false, $person_id = 0
+    ) {
+        if ($rawResult) {
+            $object = $this->getById($rawResult['insert_id'], $raw, $person_id);
+            if ($object) {
+                return $className ? [$className => $object] : $object;
+            }
         }
         return $className ? ['error' => 'server_error'] : null;
     }
@@ -33,11 +38,11 @@ abstract class Model {
     }
 
 
-    public function multiPack($rawObjects) {
+    public function multiPack($rawObjects, $person_id = 0) {
         if (is_array($rawObjects)) {
             $objects = [];
             foreach ($rawObjects as $rawObject) {
-                if (($object = $this->pack($rawObject))) {
+                if (($object = $this->pack($rawObject, $person_id))) {
                     $objects[] = $object;
                 }
             }

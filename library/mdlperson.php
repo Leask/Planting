@@ -42,7 +42,7 @@ class MdlPerson extends model {
     }
 
 
-    public function pack($rawPeople) {
+    public function pack($rawPeople, $person_id = 0) {
         return $rawPeople ? [
             'id'          => (int) $rawPeople['id'],
             'external_id' => $rawPeople['external_id'],
@@ -61,7 +61,7 @@ class MdlPerson extends model {
     }
 
 
-    public function getById($id, $raw = false) {
+    public function getById($id, $raw = false, $person_id = 0) {
         if (($id = (int) $id)) {
             $curPerson = Dbio::queryRow(
                 "SELECT * FROM `people` WHERE `id` = {$id};"
