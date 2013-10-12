@@ -138,4 +138,24 @@ class MdlCaring extends model {
         return ['error' => 'caring_not_found'];
     }
 
+
+    public function getCaringByPersonId($person_id) {
+        $person_id = (int) $person_id;
+        if ($person_id) {
+            $mdlNode   = new MdlNode();
+            $statusIdx = $this->getStatusIdxByStatus('normal');
+            $rawResult = Dbio::query(
+                "SELECT *, `c`.`status` AS `caring_status`
+                 FROM   `nodes`  AS `n`,
+                        `caring` AS `c`
+                 WHERE  `n`.`id`         = `c`.`node_id`
+                 AND    `n`.`status`     = {$statusIdx}
+                 AND    `c`.`status`     = {$statusIdx}
+                 AND    `c`.`created_by` = {$person_id};"
+            );
+            return $mdlNode->multiPack($rawResult);
+        }
+        return null;
+    }
+
 }

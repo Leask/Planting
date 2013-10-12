@@ -96,5 +96,12 @@
         "methods"        : ["DELETE"],
         "patterns"       : ["\/^\\/v1\\/caring(\\?.*)?$\/"],
         "authentication" : ["person"]
+    },
+    {
+        "controller"     : "caring",
+        "action"         : "caring",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/nodes\\/caring(\\?.*)?$\/"],
+        "authentication" : []
     }
 ]

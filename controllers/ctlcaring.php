@@ -54,6 +54,29 @@ class CtlCaring extends Controller {
     }
 
 
+    public function actCaring() {
+        if (!($inputs = $this->getInputs([
+            'person_id' => ['get', '']
+        ]))) {
+            return;
+        }
+        $person_id = strtolower(trim($inputs['person_id']));
+        if ($person_id === 'me') {
+            if (!$this->token) {
+                $this->jsonError(401, 'authentication_required');
+                return;
+            }
+            $person_id = $this->token['person_id'];
+        }
+        $mdlCaring = new MdlCaring();
+        $nodes = $mdlCaring->getCaringByPersonId($person_id);
+        if ($nodes === null) {
+            $this->jsonError(500);
+        }
+        $this->jsonResponse($nodes);
+    }
+
+
     // public function actFollowing() {
     //     if (!($inputs = $this->getInputs([
     //         'person_id' => ['get', '']
