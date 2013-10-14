@@ -103,5 +103,12 @@
         "methods"        : [],
         "patterns"       : ["\/^\\/v1\\/nodes\\/caring(\\?.*)?$\/"],
         "authentication" : []
+    },
+    {
+        "controller"     : "caring",
+        "action"         : "people",
+        "methods"        : [],
+        "patterns"       : ["\/^\\/v1\\/caring\\/people(\\?.*)?$\/"],
+        "authentication" : []
     }
 ]

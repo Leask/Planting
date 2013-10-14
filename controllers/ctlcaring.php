@@ -72,8 +72,25 @@ class CtlCaring extends Controller {
         $nodes = $mdlCaring->getCaringByPersonId($person_id);
         if ($nodes === null) {
             $this->jsonError(500);
+            return;
         }
         $this->jsonResponse($nodes);
+    }
+
+
+    public function actPeople() {
+        if (!($inputs = $this->getInputs([
+            'node_id' => ['get', 'int']
+        ]))) {
+            return;
+        }
+        $mdlCaring = new MdlCaring();
+        $people = $mdlCaring->getCaringPeopleByNodeId($inputs['node_id']);
+        if ($people === null) {
+            $this->jsonError('400', 'invalid_node_id');
+            return;
+        }
+        $this->jsonResponse($people);
     }
 
 

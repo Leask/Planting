@@ -158,4 +158,26 @@ class MdlCaring extends model {
         return null;
     }
 
+
+    public function getCaringPeopleByNodeId($node_id) {
+        $node_id = (int) $node_id;
+        if ($node_id) {
+            $mdlPerson = new MdlPerson();
+            $statusIdx = $this->getStatusIdxByStatus('normal');
+            $rawResult = Dbio::query(
+                "SELECT `p`.*
+                 FROM   `nodes`  AS `n`,
+                        `caring` AS `c`,
+                        `people` AS `p`
+                 WHERE  `n`.`id`         = {$node_id}
+                 AND    `n`.`id`         = `c`.`node_id`
+                 AND    `p`.`id`         = `c`.`created_by`
+                 AND    `n`.`status`     = {$statusIdx}
+                 AND    `c`.`status`     = {$statusIdx};"
+            );
+            return $mdlPerson->multiPack($rawResult);
+        }
+        return null;
+    }
+
 }
