@@ -1,4 +1,5 @@
-# CareNodes API
+# Planting
+Project Planting Education
 
 
 ## How to test
