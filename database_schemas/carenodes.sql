@@ -1,5 +1,5 @@
-CREATE DATABASE `carenodes`;
+CREATE DATABASE `planting`;
 
--- grant all privileges on carenodes.* to 'carenodes'@'%' identified by '689270b764b555a88deda40bcb2c0d44';
-grant all privileges on carenodes.* to 'carenodes'@'localhost' identified by '689270b764b555a88deda40bcb2c0d44';
+-- grant all privileges on planting.* to 'planting'@'%' identified by '*******';
+grant all privileges on planting.* to 'planting'@'localhost' identified by '*******';
 FLUSH PRIVILEGES;

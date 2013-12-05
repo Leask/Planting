@@ -6,8 +6,8 @@ Project Planting Education
 
 * Test on production server, runs:
 
-    export carenodes_host='api.carenodes.com'
+    export planting_host='api.plantingedu.com'
 
 * Test on development server, runs:
 
-    export carenodes_host='leask.carenodes.com'
+    export planting_host='leask.plantingedu.com'

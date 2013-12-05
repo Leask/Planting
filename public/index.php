@@ -1,8 +1,8 @@
 <?php
 /**
- * CareNodes
+ * Planting
  * @author Leask Huang <i@leaskh.com>
- * @copyright Copyright (C) 2013 CareNodes
+ * @copyright Copyright (C) 2013 Planting
  */
 
 // Initialization
@@ -31,7 +31,7 @@ date_default_timezone_set('UTC');
 set_time_limit(3);
 ini_set('post_max_size', '15M');
 ini_set('upload_max_filesize', '15M');
-ini_set('session.cookie_domain', '.carenodes.com');
+ini_set('session.cookie_domain', '.plantingedu.com');
 ini_set('log_errors', 'On');
 ini_set('error_log', '/var/log/php.log');
 // }

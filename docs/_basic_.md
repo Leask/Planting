@@ -1,4 +1,4 @@
-# Basic Infos Of CareNode API v1
+# Basic Infos Of Planting API v1
 
 author: Leask Huang
 
@@ -27,9 +27,6 @@ All time strings are ISO-8601.
             "status"          : [str],          // verifying / verified
             "timezone"        : [str:timezone], // #K1
             "locale"          : [str:locale],   // #K1
-            "following_count" : [int],          // #K1
-            "followers_count" : [int],          // #K1
-            "node_count"      : [int],          // #K1
             "class"           : "person"
         }
 
@@ -72,17 +69,4 @@ All time strings are ISO-8601.
             "person_id": 732,
             "scope": [],
             "token": "705585b4a0967fbba1c8f9764d6d06d4d0061227da7062d46ddbfbc8fdd6b46a"
-        }
-
-* Node
-
-        #!javascript
-        {
-            "id"       : [str],
-            "when"     : [str:time],
-            "what"     : [str],
-            "who"      : [obj:person],
-            "reply_to" : [str:node_id],
-            "caring"   : [array:person_obj],
-            "class"    : "node"
         }

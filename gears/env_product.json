@@ -1,8 +1,8 @@
 {
     "node_name"   : "Planting",
     "root_domain" : ".plantingedu.com",
-    "web_url"     : "http://leask.plantingedu.com",
-    "api_url"     : "http://api.leask.plantingedu.com",
+    "web_url"     : "http://www.plantingedu.com",
+    "api_url"     : "http://api.plantingedu.com",
     "app_schema"  : "planting",
     "debug"       : true,
     "verbose_log" : true,
